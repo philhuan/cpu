@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado v2017.4 (64-bit)
+# SW Build 2086221 on Fri Dec 15 20:55:39 MST 2017
+# IP Build 2085800 on Fri Dec 15 22:25:07 MST 2017
+# Start of session at: Thu Jul  4 13:48:39 2019
+# Process ID: 6996
+# Current directory: D:/code/fpga/cpu
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13476 D:\code\fpga\cpu\cpu.xpr
+# Log file: D:/code/fpga/cpu/vivado.log
+# Journal file: D:/code/fpga/cpu\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project D:/code/fpga/cpu/cpu.xpr
+update_compile_order -fileset sources_1
