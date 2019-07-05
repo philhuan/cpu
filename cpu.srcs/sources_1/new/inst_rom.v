@@ -1,42 +1,16 @@
-//////////////////////////////////////////////////////////////////////
-////                                                              ////
-//// Copyright (C) 2014 leishangwen@163.com                       ////
-////                                                              ////
-//// This source file may be used and distributed without         ////
-//// restriction provided that this copyright statement is not    ////
-//// removed from the file and that any derivative work contains  ////
-//// the original copyright notice and the associated disclaimer. ////
-////                                                              ////
-//// This source file is free software; you can redistribute it   ////
-//// and/or modify it under the terms of the GNU Lesser General   ////
-//// Public License as published by the Free Software Foundation; ////
-//// either version 2.1 of the License, or (at your option) any   ////
-//// later version.                                               ////
-////                                                              ////
-//// This source is distributed in the hope that it will be       ////
-//// useful, but WITHOUT ANY WARRANTY; without even the implied   ////
-//// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      ////
-//// PURPOSE.  See the GNU Lesser General Public License for more ////
-//// details.                                                     ////
-////                                                              ////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// Module:  inst_rom
-// File:    inst_rom.v
-// Author:  Lei Silei
-// E-mail:  leishangwen@163.com
-// Description: 指令存储器
-// Revision: 1.0
-//////////////////////////////////////////////////////////////////////
 
+/**
+指令存储器
+当pc模块检测到rst为0时，将ce置为1，此模块就根据addr输出对应地址的数据，
+此数据被IF/ID模块存储
+*/
 `include "defines.v"
 
 module inst_rom(
-
-//	input	wire										clk,
-	input wire                    ce,
+	input wire ce, 
+	//指令存储器使能，由pc模块控制
 	input wire[`InstAddrBus]			addr,
+	//
 	output reg[`InstBus]					inst
 	
 );

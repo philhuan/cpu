@@ -1,54 +1,28 @@
-//////////////////////////////////////////////////////////////////////
-////                                                              ////
-//// Copyright (C) 2014 leishangwen@163.com                       ////
-////                                                              ////
-//// This source file may be used and distributed without         ////
-//// restriction provided that this copyright statement is not    ////
-//// removed from the file and that any derivative work contains  ////
-//// the original copyright notice and the associated disclaimer. ////
-////                                                              ////
-//// This source file is free software; you can redistribute it   ////
-//// and/or modify it under the terms of the GNU Lesser General   ////
-//// Public License as published by the Free Software Foundation; ////
-//// either version 2.1 of the License, or (at your option) any   ////
-//// later version.                                               ////
-////                                                              ////
-//// This source is distributed in the hope that it will be       ////
-//// useful, but WITHOUT ANY WARRANTY; without even the implied   ////
-//// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      ////
-//// PURPOSE.  See the GNU Lesser General Public License for more ////
-//// details.                                                     ////
-////                                                              ////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// Module:  regfile
-// File:    regfile.v
-// Author:  Lei Silei
-// E-mail:  leishangwen@163.com
-// Description: 通用寄存器，共32个
-// Revision: 1.0
-//////////////////////////////////////////////////////////////////////
 
+//通用寄存器，共32个
 `include "defines.v"
 
 module regfile(
 
-	input	wire										clk,
-	input wire										rst,
+	input wire clk,
+	input wire	rst,
 	
 	//写端口
-	input wire										we,
+	input wire we,
+	//写使能信号，只有此输入为1，寄存器才接受修改数据
 	input wire[`RegAddrBus]				waddr,
 	input wire[`RegBus]						wdata,
 	
 	//读端口1
-	input wire										re1,
-	input wire[`RegAddrBus]			  raddr1,
-	output reg[`RegBus]           rdata1,
+	input wire re1,
+	//第一个读端口是否可读
+	input wire[`RegAddrBus] raddr1,
+	//要读的寄存器地址
+	output reg[`RegBus] rdata1,
+	//读取的数据
 	
 	//读端口2
-	input wire										re2,
+	input wire re2,
 	input wire[`RegAddrBus]			  raddr2,
 	output reg[`RegBus]           rdata2
 	
@@ -65,20 +39,26 @@ module regfile(
 	end
 	
 	always @ (*) begin
-		if(rst == `RstEnable) begin
+		if(rst == `RstEnable) begin	//复位
 			  rdata1 <= `ZeroWord;
-	  end else if(raddr1 == `RegNumLog2'h0) begin
+	  end else if(raddr1 == `RegNumLog2'h0) begin	
+			//取$0时，直接给出0
 	  		rdata1 <= `ZeroWord;
 	  end else if((raddr1 == waddr) && (we == `WriteEnable) 
 	  	            && (re1 == `ReadEnable)) begin
+		  //如果写的同时读，并且可读可写，直接返回要写的数据
+		  //此处解决RAW数据冲突（相隔2条指令的）
 	  	  rdata1 <= wdata;
 	  end else if(re1 == `ReadEnable) begin
+		  //普通可读情况下，读取寄存器
 	      rdata1 <= regs[raddr1];
 	  end else begin
+		  //其他情况，直接返回0
 	      rdata1 <= `ZeroWord;
 	  end
 	end
 
+	//此接口与上面的写接口相似
 	always @ (*) begin
 		if(rst == `RstEnable) begin
 			  rdata2 <= `ZeroWord;

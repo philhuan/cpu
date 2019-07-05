@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7a35tcsg324-1" LaunchTime="1562215070">
-  <File Type="PWROPT-DCP" Name="openmips_min_sopc_tb_pwropt.dcp"/>
+<GenRun Id="impl_1" LaunchPart="xc7a35tcsg324-1" LaunchTime="1562220706">
+  <File Type="OPT-HWDEF" Name="openmips_min_sopc_tb.hwdef"/>
+  <File Type="PA-DCP" Name="openmips_min_sopc_tb.dcp"/>
+  <File Type="OPT-DCP" Name="openmips_min_sopc_tb_opt.dcp"/>
   <File Type="ROUTE-PWR" Name="openmips_min_sopc_tb_power_routed.rpt"/>
   <File Type="PA-TCL" Name="openmips_min_sopc_tb.tcl"/>
   <File Type="ROUTE-PWR-SUM" Name="openmips_min_sopc_tb_power_summary_routed.pb"/>
@@ -8,10 +10,9 @@
   <File Type="BG-DRC" Name="openmips_min_sopc_tb.drc"/>
   <File Type="OPT-METHODOLOGY-DRC" Name="openmips_min_sopc_tb_methodology_drc_opted.rpt"/>
   <File Type="INIT-TIMING" Name="openmips_min_sopc_tb_timing_summary_init.rpt"/>
-  <File Type="OPT-HWDEF" Name="openmips_min_sopc_tb.hwdef"/>
-  <File Type="OPT-DCP" Name="openmips_min_sopc_tb_opt.dcp"/>
   <File Type="OPT-DRC" Name="openmips_min_sopc_tb_drc_opted.rpt"/>
   <File Type="OPT-TIMING" Name="openmips_min_sopc_tb_timing_summary_opted.rpt"/>
+  <File Type="PWROPT-DCP" Name="openmips_min_sopc_tb_pwropt.dcp"/>
   <File Type="PWROPT-DRC" Name="openmips_min_sopc_tb_drc_pwropted.rpt"/>
   <File Type="PWROPT-TIMING" Name="openmips_min_sopc_tb_timing_summary_pwropted.rpt"/>
   <File Type="PLACE-DCP" Name="openmips_min_sopc_tb_placed.dcp"/>

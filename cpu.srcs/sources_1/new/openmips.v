@@ -1,35 +1,4 @@
-//////////////////////////////////////////////////////////////////////
-////                                                              ////
-//// Copyright (C) 2014 leishangwen@163.com                       ////
-////                                                              ////
-//// This source file may be used and distributed without         ////
-//// restriction provided that this copyright statement is not    ////
-//// removed from the file and that any derivative work contains  ////
-//// the original copyright notice and the associated disclaimer. ////
-////                                                              ////
-//// This source file is free software; you can redistribute it   ////
-//// and/or modify it under the terms of the GNU Lesser General   ////
-//// Public License as published by the Free Software Foundation; ////
-//// either version 2.1 of the License, or (at your option) any   ////
-//// later version.                                               ////
-////                                                              ////
-//// This source is distributed in the hope that it will be       ////
-//// useful, but WITHOUT ANY WARRANTY; without even the implied   ////
-//// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      ////
-//// PURPOSE.  See the GNU Lesser General Public License for more ////
-//// details.                                                     ////
-////                                                              ////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// Module:  openmips
-// File:    openmips.v
-// Author:  Lei Silei
-// E-mail:  leishangwen@163.com
-// Description: OpenMIPS处理器的顶层文件
-// Revision: 1.0
-//////////////////////////////////////////////////////////////////////
-
+//取指(IF)、译码(ID)、执行(EX)、访存(MEM)、写回寄存器堆(WB)
 `include "defines.v"
 
 module openmips(
@@ -96,9 +65,9 @@ module openmips(
 	pc_reg pc_reg0(
 		.clk(clk),
 		.rst(rst),
+		//-----------------
 		.pc(pc),
-		.ce(rom_ce_o)	
-			
+		.ce(rom_ce_o)
 	);
 	
   assign rom_addr_o = pc;
@@ -109,6 +78,9 @@ module openmips(
 		.rst(rst),
 		.if_pc(pc),
 		.if_inst(rom_data_i),
+		//由指令存储器读过来的指令数据
+		
+		//-----------------
 		.id_pc(id_pc_i),
 		.id_inst(id_inst_i)      	
 	);
@@ -122,6 +94,7 @@ module openmips(
 		.reg1_data_i(reg1_data),
 		.reg2_data_i(reg2_data),
 
+		//-----------------
 		//送到regfile的信息
 		.reg1_read_o(reg1_read),
 		.reg2_read_o(reg2_read), 	  
@@ -146,10 +119,14 @@ module openmips(
 		.waddr (wb_wd_i),
 		.wdata (wb_wdata_i),
 		.re1 (reg1_read),
+		//第一个读端口是否可读
 		.raddr1 (reg1_addr),
-		.rdata1 (reg1_data),
+		//要读的寄存器地址
 		.re2 (reg2_read),
 		.raddr2 (reg2_addr),
+		//-----------------
+		.rdata1 (reg1_data),
+		//第一个端口读取的数据
 		.rdata2 (reg2_data)
 	);
 
@@ -166,6 +143,7 @@ module openmips(
 		.id_wd(id_wd_o),
 		.id_wreg(id_wreg_o),
 	
+		//-----------------
 		//传递到执行阶段EX模块的信息
 		.ex_aluop(ex_aluop_i),
 		.ex_alusel(ex_alusel_i),
@@ -186,7 +164,8 @@ module openmips(
 		.reg2_i(ex_reg2_i),
 		.wd_i(ex_wd_i),
 		.wreg_i(ex_wreg_i),
-	  
+		
+	  //-----------------
 	  //EX模块的输出到EX/MEM模块信息
 		.wd_o(ex_wd_o),
 		.wreg_o(ex_wreg_o),
@@ -203,8 +182,8 @@ module openmips(
 		.ex_wd(ex_wd_o),
 		.ex_wreg(ex_wreg_o),
 		.ex_wdata(ex_wdata_o),
-	
-
+		
+		//-----------------
 		//送到访存阶段MEM模块的信息
 		.mem_wd(mem_wd_i),
 		.mem_wreg(mem_wreg_i),
@@ -216,12 +195,13 @@ module openmips(
   //MEM模块例化
 	mem mem0(
 		.rst(rst),
-	
+		
 		//来自EX/MEM模块的信息	
 		.wd_i(mem_wd_i),
 		.wreg_i(mem_wreg_i),
 		.wdata_i(mem_wdata_i),
-	  
+		
+		//-----------------
 		//送到MEM/WB模块的信息
 		.wd_o(mem_wd_o),
 		.wreg_o(mem_wreg_o),
@@ -232,16 +212,20 @@ module openmips(
 	mem_wb mem_wb0(
 		.clk(clk),
 		.rst(rst),
-
+		
 		//来自访存阶段MEM模块的信息	
 		.mem_wd(mem_wd_o),
 		.mem_wreg(mem_wreg_o),
 		.mem_wdata(mem_wdata_o),
-	
+		
+		//-----------------
 		//送到回写阶段的信息
 		.wb_wd(wb_wd_i),
+		//要写入的寄存器地址
 		.wb_wreg(wb_wreg_i),
+		//是否要写入目的寄存器
 		.wb_wdata(wb_wdata_i)
+		//要写入目的寄存器的值
 									       	
 	);
 

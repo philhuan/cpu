@@ -1,66 +1,68 @@
-//////////////////////////////////////////////////////////////////////
-////                                                              ////
-//// Copyright (C) 2014 leishangwen@163.com                       ////
-////                                                              ////
-//// This source file may be used and distributed without         ////
-//// restriction provided that this copyright statement is not    ////
-//// removed from the file and that any derivative work contains  ////
-//// the original copyright notice and the associated disclaimer. ////
-////                                                              ////
-//// This source file is free software; you can redistribute it   ////
-//// and/or modify it under the terms of the GNU Lesser General   ////
-//// Public License as published by the Free Software Foundation; ////
-//// either version 2.1 of the License, or (at your option) any   ////
-//// later version.                                               ////
-////                                                              ////
-//// This source is distributed in the hope that it will be       ////
-//// useful, but WITHOUT ANY WARRANTY; without even the implied   ////
-//// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      ////
-//// PURPOSE.  See the GNU Lesser General Public License for more ////
-//// details.                                                     ////
-////                                                              ////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// Module:  id
-// File:    id.v
-// Author:  Lei Silei
-// E-mail:  leishangwen@163.com
-// Description: 译码阶段
-// Revision: 1.0
-//////////////////////////////////////////////////////////////////////
 
+//译码阶段
 `include "defines.v"
+/**
+对指令进行译码，得到运算类型，子类型，源操作数，目的操作数，操作数是寄存器的话还要读寄存器
+*/
 
 module id(
 
-	input wire										rst,
-	input wire[`InstAddrBus]			pc_i,
-	input wire[`InstBus]          inst_i,
+	
+	input wire rst,
+	input wire[`InstAddrBus] pc_i,	
+	//由IF/ID读过来的指令地址（PC值）
+	input wire[`InstBus] inst_i,
+	//由IF/ID读过来的指令数据（来自指令ROM）
 
-	input wire[`RegBus]           reg1_data_i,
-	input wire[`RegBus]           reg2_data_i,
+	input wire[`RegBus] reg1_data_i,
+	//regfile模块第一个读接口输出的数据
+	input wire[`RegBus] reg2_data_i,
+	//regfile模块第二个读接口输出的数据
+	
+	//处于执行阶段的指令要写入的目的寄存器信息
+	input wire ex_wreg_i,
+	//执行阶段是否要写入目的寄存器
+	input wire[`RegBus] ex_wdata_i,
+	input wire[`RegAddrBus] ex_wd_i,
+	//要写入的地址和数据
+	
+	//处于访存阶段的指令要写入的目的寄存器信息
+	input wire mem_wreg_i,
+	//访存阶段是否要写入目的寄存器
+	input wire[`RegBus] mem_wdata_i,
+	input wire[`RegAddrBus] mem_wd_i,
+	//要写入的地址和数据
 
 	//送到regfile的信息
-	output reg                    reg1_read_o,
-	output reg                    reg2_read_o,     
-	output reg[`RegAddrBus]       reg1_addr_o,
-	output reg[`RegAddrBus]       reg2_addr_o, 	      
+	output reg reg1_read_o,
+	//regfile端口1可读
+	output reg reg2_read_o,     
+	output reg[`RegAddrBus] reg1_addr_o,
+	//regfile读取的地址
+	output reg[`RegAddrBus] reg2_addr_o, 	      
 	
 	//送到执行阶段的信息
-	output reg[`AluOpBus]         aluop_o,
-	output reg[`AluSelBus]        alusel_o,
-	output reg[`RegBus]           reg1_o,
-	output reg[`RegBus]           reg2_o,
-	output reg[`RegAddrBus]       wd_o,
-	output reg                    wreg_o
+	output reg[`AluOpBus] aluop_o,
+	//运算的子类型
+	output reg[`AluSelBus] alusel_o,
+	//运算的类型
+	output reg[`RegBus] reg1_o,
+	output reg[`RegBus] reg2_o,
+	//两个源操作数
+	output reg[`RegAddrBus] wd_o,
+	//目的寄存器地址
+	output reg wreg_o
+	//是否有要写入的
 );
 
-  wire[5:0] op = inst_i[31:26];
+  wire[5:0] op = inst_i[31:26];	
+  //指令码
   wire[4:0] op2 = inst_i[10:6];
   wire[5:0] op3 = inst_i[5:0];
+  //功能码
   wire[4:0] op4 = inst_i[20:16];
   reg[`RegBus]	imm;
+  //指令是否有效
   reg instvalid;
   
  
@@ -88,30 +90,73 @@ module id(
 			reg2_addr_o <= inst_i[20:16];		
 			imm <= `ZeroWord;			
 		  case (op)
-		  	`EXE_ORI:			begin                        //ORI指令
+		    `EXE_SPECIAL_INST:		begin
+		    	case (op2)
+		    		5'b00000:			begin
+		    			case (op3)
+		    				//R类
+		    				`EXE_AND:	begin
+		    					wreg_o <= `WriteEnable;		
+								aluop_o <= `EXE_AND_OP;
+		  						alusel_o <= `EXE_RES_LOGIC;	  
+								reg1_read_o <= 1'b1;	
+								reg2_read_o <= 1'b1;	
+		  						instvalid <= `InstValid;	
+								end  	
+						    default:	begin
+						    end
+						  endcase
+						 end
+						default: begin
+						end
+					endcase	
+					end	
+		  /*I类指令：
+		  */
+		  	`EXE_ORI:			
+			begin                        //ORI指令
+				//需要写寄存器
 		  		wreg_o <= `WriteEnable;		
 				aluop_o <= `EXE_OR_OP;
-		  		alusel_o <= `EXE_RES_LOGIC; 
+				//子类型为EXE_OR_OP
+		  		alusel_o <= `EXE_RES_LOGIC;
+				//类型为EXE_RES_LOGIC
 				reg1_read_o <= 1'b1;	
-				reg2_read_o <= 1'b0;	  	
-					imm <= {16'h0, inst_i[15:0]};		
-					wd_o <= inst_i[20:16];
-					instvalid <= `InstValid;	
-		  	end 							 
-		    default:			begin
+				reg2_read_o <= 1'b0;
+				//访问寄存器标志
+				imm <= {16'h0, inst_i[15:0]};	
+				//取出立即数
+				wd_o <= inst_i[20:16];
+				//取目的寄存器
+				instvalid <= `InstValid;	
+		  	end 
+			
+			
+		    default:			
+			begin
+				
 		    end
 		  endcase		  //case op			
 		end       //if
 	end         //always
 	
 
+	//读寄存器
 	always @ (*) begin
 		if(rst == `RstEnable) begin
 			reg1_o <= `ZeroWord;
+	  end  else if((reg1_read_o == 1'b1) && (ex_wreg_i == 1'b1) 
+								&& (ex_wd_i == reg1_addr_o)) begin
+			reg1_o <= ex_wdata_i; 
+		end else if((reg1_read_o == 1'b1) && (mem_wreg_i == 1'b1) 
+								&& (mem_wd_i == reg1_addr_o)) begin
+			reg1_o <= mem_wdata_i; 			
 	  end else if(reg1_read_o == 1'b1) begin
-	  	reg1_o <= reg1_data_i;
+	  	reg1_o <= reg1_data_i;	
+		//需要访问寄存器，取寄存器值
 	  end else if(reg1_read_o == 1'b0) begin
-	  	reg1_o <= imm;
+	  	reg1_o <= imm;			
+		//立即数直接赋值
 	  end else begin
 	    reg1_o <= `ZeroWord;
 	  end
@@ -120,6 +165,14 @@ module id(
 	always @ (*) begin
 		if(rst == `RstEnable) begin
 			reg2_o <= `ZeroWord;
+	  end else if((reg2_read_o == 1'b1) && (ex_wreg_i == 1'b1) 
+								&& (ex_wd_i == reg2_addr_o)) begin
+			//要读取的寄存器就是执行阶段要写的寄存器，直接把执行阶段的值ex_wdata_i作为reg1_o的值
+			reg2_o <= ex_wdata_i; 
+		end else if((reg2_read_o == 1'b1) && (mem_wreg_i == 1'b1) 
+								&& (mem_wd_i == reg2_addr_o)) begin
+			//如果要读取的寄存器是执行阶段要写入的寄存器，直接将访存的结果mem_wdata_i作为reg1_o的值
+			reg2_o <= mem_wdata_i;			
 	  end else if(reg2_read_o == 1'b1) begin
 	  	reg2_o <= reg2_data_i;
 	  end else if(reg2_read_o == 1'b0) begin

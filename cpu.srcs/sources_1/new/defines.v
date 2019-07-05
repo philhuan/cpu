@@ -28,12 +28,14 @@
 
 //ЦёБо
 `define EXE_ORI  6'b001101
+`define EXE_AND  6'b100100
 
 
 `define EXE_NOP 6'b000000
 
 
 //AluOp
+`define EXE_AND_OP   8'b00100100
 `define EXE_OR_OP    8'b00100101
 `define EXE_ORI_OP  8'b01011010
 

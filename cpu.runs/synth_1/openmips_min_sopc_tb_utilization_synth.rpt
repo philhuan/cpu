@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
-| Date         : Thu Jul  4 12:37:27 2019
+| Date         : Thu Jul  4 14:09:29 2019
 | Host         : LAPTOP-481GFMG7 running 64-bit major release  (build 9200)
 | Command      : report_utilization -file openmips_min_sopc_tb_utilization_synth.rpt -pb openmips_min_sopc_tb_utilization_synth.pb
 | Design       : openmips_min_sopc_tb

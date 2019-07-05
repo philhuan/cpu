@@ -41,7 +41,7 @@ EAStep()
 }
 
 # pre-commands:
-/bin/touch .init_design.begin.rst
+/bin/touch .place_design.begin.rst
 EAStep vivado -log openmips_min_sopc_tb.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source openmips_min_sopc_tb.tcl -notrace
 
 
