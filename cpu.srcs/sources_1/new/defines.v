@@ -33,6 +33,7 @@
 
 `define EXE_NOP 6'b000000
 
+`define EXE_SPECIAL_INST 6'b000000
 
 //AluOp
 `define EXE_AND_OP   8'b00100100
