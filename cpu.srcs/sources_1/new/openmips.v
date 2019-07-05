@@ -54,17 +54,26 @@ module openmips(
 	wire[`RegBus] wb_wdata_i;
 	
 	//连接译码阶段ID模块与通用寄存器Regfile模块
-  wire reg1_read;
-  wire reg2_read;
-  wire[`RegBus] reg1_data;
-  wire[`RegBus] reg2_data;
-  wire[`RegAddrBus] reg1_addr;
-  wire[`RegAddrBus] reg2_addr;
+	wire reg1_read;
+	wire reg2_read;
+	wire[`RegBus] reg1_data;
+	wire[`RegBus] reg2_data;
+	wire[`RegAddrBus] reg1_addr;
+	wire[`RegAddrBus] reg2_addr;
+  
+	wire is_in_delayslot_i;
+	wire is_in_delayslot_o;
+	wire next_inst_in_delayslot_o;
+	wire id_branch_flag_o;
+	wire[`RegBus] branch_target_address;
+	
   
   //pc_reg例化
 	pc_reg pc_reg0(
 		.clk(clk),
 		.rst(rst),
+		.branch_flag_i(id_branch_flag_o),
+		.branch_target_address_i(branch_target_address),
 		//-----------------
 		.pc(pc),
 		.ce(rom_ce_o)
@@ -118,7 +127,10 @@ module openmips(
 		.reg1_o(id_reg1_o),
 		.reg2_o(id_reg2_o),
 		.wd_o(id_wd_o),
-		.wreg_o(id_wreg_o)
+		.wreg_o(id_wreg_o),
+		
+		.branch_flag_o(id_branch_flag_o),
+		.branch_target_address_o(branch_target_address)
 	);
 
   //通用寄存器Regfile例化
@@ -238,5 +250,7 @@ module openmips(
 		//要写入目的寄存器的值
 									       	
 	);
+	
+
 
 endmodule

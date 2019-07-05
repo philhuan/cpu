@@ -51,8 +51,12 @@ module id(
 	//两个源操作数
 	output reg[`RegAddrBus] wd_o,
 	//目的寄存器地址
-	output reg wreg_o
+	output reg wreg_o,
 	//是否有要写入的
+	
+	output reg                    branch_flag_o,
+	output reg[`RegBus]           branch_target_address_o
+	//当前译码的指令是不是在延迟槽内
 );
 
   wire[5:0] op = inst_i[31:26];	
@@ -64,7 +68,11 @@ module id(
   reg[`RegBus]	imm;
   //指令是否有效
   reg instvalid;
+  wire[`RegBus] pc_plus_4;
+  assign pc_plus_4 = pc_i +4;
   
+  wire[`RegBus] imm_sll2_signedext;  
+  assign imm_sll2_signedext = {{14{inst_i[15]}}, inst_i[15:0], 2'b00 };
  
 	always @ (*) begin	
 		if (rst == `RstEnable) begin
@@ -77,7 +85,11 @@ module id(
 			reg2_read_o <= 1'b0;
 			reg1_addr_o <= `NOPRegAddr;
 			reg2_addr_o <= `NOPRegAddr;
-			imm <= 32'h0;			
+			imm <= 32'h0;
+			branch_target_address_o <= `ZeroWord;
+			branch_flag_o <= `NotBranch;
+			
+			
 	  end else begin
 			aluop_o <= `EXE_NOP_OP;
 			alusel_o <= `EXE_RES_NOP;
@@ -89,6 +101,9 @@ module id(
 			reg1_addr_o <= inst_i[25:21];
 			reg2_addr_o <= inst_i[20:16];		
 			imm <= `ZeroWord;			
+			branch_target_address_o <= `ZeroWord;
+			branch_flag_o <= `NotBranch;	
+			
 		  case (op)
 		    `EXE_SPECIAL_INST:		begin
 		    	case (op2)
@@ -152,7 +167,34 @@ module id(
 				wd_o <= inst_i[20:16];		  	
 				instvalid <= `InstValid;	
 			end
-			
+			//J类指令
+			`EXE_J:			
+			begin
+		  		wreg_o <= `WriteDisable;		
+				aluop_o <= `EXE_J_OP;
+		  		alusel_o <= `EXE_RES_JUMP_BRANCH; reg1_read_o <= 1'b0;	
+				reg2_read_o <= 1'b0;
+			    branch_target_address_o <= {pc_plus_4[31:28], inst_i[25:0], 2'b00};
+			    branch_flag_o <= `Branch;
+			   
+			    instvalid <= `InstValid;	
+			end
+			//I类指令
+			`EXE_BEQ:			
+			begin
+		  		wreg_o <= `WriteDisable;		
+				aluop_o <= `EXE_BEQ_OP;
+		  		alusel_o <= `EXE_RES_JUMP_BRANCH; 
+				reg1_read_o <= 1'b1;	
+				reg2_read_o <= 1'b1;
+		  		instvalid <= `InstValid;	
+		  		if(reg1_o == reg2_o) 
+				begin
+			    	branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
+			    	branch_flag_o <= `Branch;
+			    		  	
+			    end
+				end
 			
 		    default:			
 			begin

@@ -24,6 +24,8 @@
 `define False_v 1'b0
 `define ChipEnable 1'b1
 `define ChipDisable 1'b0
+`define InDelaySlot 1'b1
+`define NotInDelaySlot 1'b0
 
 
 //Ö¸Áî
@@ -38,12 +40,17 @@
 `define EXE_ADD  6'b100000
 `define EXE_ADDI  6'b001000
 
+`define EXE_J  6'b000010
+`define EXE_BEQ  6'b000100
+
 //AluOp
 `define EXE_AND_OP   8'b00100100
 `define EXE_OR_OP    8'b00100101
 `define EXE_ORI_OP  8'b01011010
 `define EXE_ADD_OP  8'b00100000
 `define EXE_ADDI_OP  8'b01010101
+`define EXE_J_OP  8'b01001111
+`define EXE_BEQ_OP  8'b01010001
 
 `define EXE_NOP_OP    8'b00000000
 
@@ -51,6 +58,7 @@
 `define EXE_RES_LOGIC 3'b001
 `define EXE_RES_ARITHMETIC 3'b100	
 `define EXE_RES_NOP 3'b000
+`define EXE_RES_JUMP_BRANCH 3'b110
 
 
 //Ö¸Áî´æ´¢Æ÷inst_rom
