@@ -35,17 +35,21 @@
 
 `define EXE_SPECIAL_INST 6'b000000
 
+`define EXE_ADD  6'b100000
+`define EXE_ADDI  6'b001000
+
 //AluOp
 `define EXE_AND_OP   8'b00100100
 `define EXE_OR_OP    8'b00100101
 `define EXE_ORI_OP  8'b01011010
-
+`define EXE_ADD_OP  8'b00100000
+`define EXE_ADDI_OP  8'b01010101
 
 `define EXE_NOP_OP    8'b00000000
 
 //AluSel
 `define EXE_RES_LOGIC 3'b001
-
+`define EXE_RES_ARITHMETIC 3'b100	
 `define EXE_RES_NOP 3'b000
 
 

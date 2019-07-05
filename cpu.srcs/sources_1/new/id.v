@@ -95,14 +95,25 @@ module id(
 		    		5'b00000:			begin
 		    			case (op3)
 		    				//R类
-		    				`EXE_AND:	begin
+		    				`EXE_AND:	
+							begin
 		    					wreg_o <= `WriteEnable;		
 								aluop_o <= `EXE_AND_OP;
 		  						alusel_o <= `EXE_RES_LOGIC;	  
 								reg1_read_o <= 1'b1;	
 								reg2_read_o <= 1'b1;	
 		  						instvalid <= `InstValid;	
-								end  	
+							end  
+							//R类
+							`EXE_ADD: 
+							begin
+								wreg_o <= `WriteEnable;		
+								aluop_o <= `EXE_ADD_OP;
+		  						alusel_o <= `EXE_RES_ARITHMETIC;		
+								reg1_read_o <= 1'b1;	
+								reg2_read_o <= 1'b1;
+		  						instvalid <= `InstValid;	
+							end
 						    default:	begin
 						    end
 						  endcase
@@ -111,8 +122,7 @@ module id(
 						end
 					endcase	
 					end	
-		  /*I类指令：
-		  */
+			//I类指令：
 		  	`EXE_ORI:			
 			begin                        //ORI指令
 				//需要写寄存器
@@ -130,6 +140,18 @@ module id(
 				//取目的寄存器
 				instvalid <= `InstValid;	
 		  	end 
+			//I类指令：
+			`EXE_ADDI:			
+			begin
+		  		wreg_o <= `WriteEnable;		
+				aluop_o <= `EXE_ADDI_OP;
+		  		alusel_o <= `EXE_RES_ARITHMETIC; 
+				reg1_read_o <= 1'b1;	
+				reg2_read_o <= 1'b0;	  	
+				imm <= {{16{inst_i[15]}}, inst_i[15:0]};		
+				wd_o <= inst_i[20:16];		  	
+				instvalid <= `InstValid;	
+			end
 			
 			
 		    default:			

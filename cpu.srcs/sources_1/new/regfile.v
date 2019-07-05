@@ -10,8 +10,8 @@ module regfile(
 	//写端口
 	input wire we,
 	//写使能信号，只有此输入为1，寄存器才接受修改数据
-	input wire[`RegAddrBus]				waddr,
-	input wire[`RegBus]						wdata,
+	input wire[`RegAddrBus] waddr,
+	input wire[`RegBus] wdata,
 	
 	//读端口1
 	input wire re1,
@@ -31,7 +31,8 @@ module regfile(
 	reg[`RegBus]  regs[0:`RegNum-1];
 
 	always @ (posedge clk) begin
-		if (rst == `RstDisable) begin
+		if (rst == `RstDisable) 
+		begin
 			if((we == `WriteEnable) && (waddr != `RegNumLog2'h0)) begin
 				regs[waddr] <= wdata;
 			end
