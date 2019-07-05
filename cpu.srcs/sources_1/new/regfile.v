@@ -39,6 +39,7 @@ module regfile(
 		end
 	end
 	
+	//读接口1
 	always @ (*) begin
 		if(rst == `RstEnable) begin	//复位
 			  rdata1 <= `ZeroWord;
@@ -59,7 +60,8 @@ module regfile(
 	  end
 	end
 
-	//此接口与上面的写接口相似
+	//读接口2
+	//此接口与上面的读接口相似
 	always @ (*) begin
 		if(rst == `RstEnable) begin
 			  rdata2 <= `ZeroWord;

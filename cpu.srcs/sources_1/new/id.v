@@ -73,6 +73,12 @@ module id(
   
   wire[`RegBus] imm_sll2_signedext;  
   assign imm_sll2_signedext = {{14{inst_i[15]}}, inst_i[15:0], 2'b00 };
+  //左移两位，然后符号扩展至32位
+  /*
+  汇编格式： J target
+功能描述： 无条件跳转。跳转目标由该分支指令对应的延迟槽指令的 PC 的最高 4 位与立即数 instr_index 左移
+2 位后的值拼接得到。
+  */
  
 	always @ (*) begin	
 		if (rst == `RstEnable) begin
